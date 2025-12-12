@@ -1,250 +1,305 @@
-// ================== CONFIGURACIÓN BÁSICA ==================
-// ====== ESTADO GLOBAL DE AUDIO ======
-let isMusicPlaying = false; // ¿está sonando el mp3?
-let userMutedMusic = false; // ¿la usuaria apagó el mp3 a propósito?
-let isVideoSoundOn = false; // ¿el video está con sonido?
+// ============================
+// CONFIG (cambia aquí)
+// ============================
 
-// Fecha objetivo para la cuenta regresiva (ajusta hora si quieres)
-const targetDate = new Date("2026-02-14T20:00:00"); // 8:00 pm
+// Evento: 14 Feb 2026 (hora local)
+const EVENT_DATE = new Date("2026-02-14T20:00:00");
 
-document.addEventListener("DOMContentLoaded", () => {
-  setupCountdown();
-  setupScrollButton();
-  setupMusicToggle();
-  setupVideoUnmute();
-  setupRevealOnScroll();
-  setupWhatsappShare();
-  // setupSparkles(); // la quitamos si no está definida
-});
+// Pega aquí tu URL de Google Apps Script (para guardar en Google Sheets)
+const GOOGLE_SHEETS_WEBAPP_URL = "PEGAR_AQUI_TU_URL_DE_APPS_SCRIPT";
 
-// ================== CUENTA REGRESIVA ==================
-function setupCountdown() {
-  const daysEl = document.getElementById("cd-days");
-  const hoursEl = document.getElementById("cd-hours");
-  const minsEl = document.getElementById("cd-mins");
-  const secsEl = document.getElementById("cd-secs");
+// Cambia por el link real del lugar
+const MAPS_URL =
+  "https://www.google.com/maps/search/?api=1&query=Sal%C3%B3n%20de%20eventos";
+const WAZE_URL = "https://waze.com/ul?q=Sal%C3%B3n%20de%20eventos&navigate=yes";
 
-  if (!daysEl || !hoursEl || !minsEl || !secsEl) return;
+// Contacto discreto del footer
+const FOOTER_CONTACT_URL =
+  "https://wa.me/521XXXXXXXXXX?text=Hola%20quiero%20informes%20de%20la%20invitaci%C3%B3n";
 
-  const update = () => {
-    const now = new Date().getTime();
-    const diff = targetDate.getTime() - now;
+// ============================
+// Helpers
+// ============================
+const $ = (id) => document.getElementById(id);
 
-    if (diff <= 0) {
-      daysEl.textContent = "00";
-      hoursEl.textContent = "00";
-      minsEl.textContent = "00";
-      secsEl.textContent = "00";
-      return;
-    }
-
-    const totalSeconds = Math.floor(diff / 1000);
-    const days = Math.floor(totalSeconds / (60 * 60 * 24));
-    const hours = Math.floor((totalSeconds / (60 * 60)) % 24);
-    const mins = Math.floor((totalSeconds / 60) % 60);
-    const secs = totalSeconds % 60;
-
-    daysEl.textContent = String(days).padStart(2, "0");
-    hoursEl.textContent = String(hours).padStart(2, "0");
-    minsEl.textContent = String(mins).padStart(2, "0");
-    secsEl.textContent = String(secs).padStart(2, "0");
-  };
-
-  update();
-  setInterval(update, 1000);
+function showToast(msg) {
+  const toast = $("toast");
+  toast.textContent = msg;
+  toast.classList.remove("hidden");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => toast.classList.add("hidden"), 2200);
 }
 
-// ================== BOTÓN SCROLL ABAJO ==================
-function setupScrollButton() {
-  const btn = document.getElementById("scrollDown");
-  const nextSection = document.getElementById("countdown");
-
-  if (!btn || !nextSection) return;
-
-  const goDown = (event) => {
-    event.preventDefault();
-
-    const sectionTop = nextSection.getBoundingClientRect().top + window.scrollY;
-
-    window.scrollTo({
-      top: sectionTop,
-      behavior: "smooth",
-    });
-  };
-
-  btn.addEventListener("click", goDown);
-  btn.addEventListener("touchstart", goDown, { passive: false });
+function pad2(n) {
+  return String(n).padStart(2, "0");
 }
 
-// ================== MÚSICA DE FONDO (MP3) ==================
-function setupMusicToggle() {
-  const musicBtn = document.getElementById("playMusicBtn");
-  const audio = document.getElementById("bgMusic");
-  const video = document.getElementById("introVideo");
-  if (!musicBtn || !audio) return;
+// ============================
+// Intro video logic
+// ============================
+const intro = $("intro");
+const introVideo = $("introVideo");
+const btnEnableVideoAudio = $("btnEnableVideoAudio");
+const btnSkipIntro = $("btnSkipIntro");
+const tapHint = $("tapHint");
 
-  const markBtn = () => {
-    if (isMusicPlaying) {
-      musicBtn.classList.add("playing");
-    } else {
-      musicBtn.classList.remove("playing");
-    }
-  };
+const main = $("main");
+const bgMusic = $("bgMusic");
+const musicToggle = $("musicToggle");
+const musicText = $("musicText");
+const musicDot = document.querySelector(".mini-btn__dot");
 
-  const playMusic = async () => {
-    try {
-      await audio.play();
-      isMusicPlaying = true;
-      userMutedMusic = false; // porque la volvió a encender
-      markBtn();
-    } catch (err) {
-      console.warn("No se pudo reproducir la música:", err);
-    }
-  };
+// Main hero video (secundario)
+const mainVideo = $("mainVideo");
 
-  const pauseMusic = () => {
-    audio.pause();
-    isMusicPlaying = false;
-    markBtn();
-  };
+let userInteracted = false;
+let musicOn = false;
 
-  // ✅ Botón flotante ♪
-  musicBtn.addEventListener("click", async () => {
-    if (!isMusicPlaying) {
-      // Si elige música, apagamos el audio del video
-      if (video) {
-        video.muted = true;
-      }
-      isVideoSoundOn = false;
-      await playMusic();
-    } else {
-      pauseMusic();
-      userMutedMusic = true; // la usuaria dijo: NO quiero música
-    }
-  });
+function enterMain() {
+  // Oculta intro
+  intro.classList.add("hidden");
+  document.body.classList.remove("no-scroll");
 
-  // ✅ Cuando entras a la invitación (sección "countdown"): auto-mp3
-  const firstSection = document.getElementById("countdown");
-  if (firstSection) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Solo auto-play si:
-            // - no está sonando música
-            // - la usuaria NO la apagó
-            // - el video NO está con sonido
-            if (!isMusicPlaying && !userMutedMusic && !isVideoSoundOn) {
-              playMusic();
-            }
-            observer.disconnect(); // solo la primera vez
-          }
-        });
-      },
-      { threshold: 0.4 }
-    );
+  // Muestra main
+  main.classList.remove("hidden");
 
-    observer.observe(firstSection);
+  // Intenta autoplay música (algunos navegadores lo bloquean)
+  tryPlayMusic();
+
+  // Intenta reproducir el video principal (muted para permitir autoplay)
+  if (mainVideo) {
+    mainVideo.muted = true;
+    mainVideo.play().catch(() => {});
   }
 }
 
-function setupVideoUnmute() {
-  const video = document.getElementById("introVideo");
-  const hint = document.getElementById("tapToUnmute");
-  const audio = document.getElementById("bgMusic");
-  const musicBtn = document.getElementById("playMusicBtn");
+function tryPlayMusic() {
+  if (!bgMusic) return;
 
-  if (!video) return;
+  bgMusic.volume = 0.9;
 
-  // ⚠️ iPhone requiere iniciar muteado
-  video.muted = true;
-
-  const hideHint = () => {
-    if (!hint) return;
-    hint.style.opacity = "0";
-    setTimeout(() => (hint.style.display = "none"), 300);
-  };
-
-  const playMusic = async () => {
-    try {
-      await audio.play();
-      isMusicPlaying = true;
-      musicBtn.classList.add("playing");
-    } catch (e) {}
-  };
-
-  const pauseMusic = () => {
-    audio.pause();
-    isMusicPlaying = false;
-    musicBtn.classList.remove("playing");
-  };
-
-  const toggleVideoAudio = async () => {
-    // SI ESTÁ MUTEADO → ACTIVAR AUDIO DEL VIDEO
-    if (video.muted) {
-      try {
-        video.muted = false;
-        await video.play(); // Safari requiere await
-        isVideoSoundOn = true;
-
-        pauseMusic(); // nunca sonar ambos
-      } catch (e) {
-        console.warn("iPhone aún no deja activar audio (requiere touch)", e);
-      }
-    }
-
-    // SI YA SONABA → MUTEO Y VUELVE EL MP3
-    else {
-      video.muted = true;
-      isVideoSoundOn = false;
-
-      if (!userMutedMusic) playMusic();
-    }
-
-    hideHint();
-  };
-
-  // 👇 Estos SÍ funcionan en todos los dispositivos
-  video.addEventListener("click", toggleVideoAudio);
-  video.addEventListener("touchstart", toggleVideoAudio, { passive: true });
+  bgMusic
+    .play()
+    .then(() => {
+      musicOn = true;
+      updateMusicUI();
+    })
+    .catch(() => {
+      // Bloqueado: se activará con el primer toque del usuario
+      musicOn = false;
+      updateMusicUI();
+      showToast("Toca cualquier parte para activar música ✨");
+    });
 }
 
-// ================== ANIMACIONES EN SCROLL (REVEAL) ==================
-function setupRevealOnScroll() {
-  const revealEls = document.querySelectorAll(".reveal");
-  if (!revealEls.length) return;
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("in-view");
-          // Una vez visible, ya no se quita
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    {
-      threshold: 0.15,
-    }
-  );
-
-  revealEls.forEach((el) => observer.observe(el));
+function updateMusicUI() {
+  if (!musicText) return;
+  musicText.textContent = musicOn ? "Música: ON" : "Música: OFF";
+  if (musicDot) musicDot.style.opacity = musicOn ? "1" : "0.45";
 }
 
-// ================== COMPARTIR POR WHATSAPP ==================
-function setupWhatsappShare() {
-  const shareBtn = document.getElementById("shareWhatsappBtn");
-  if (!shareBtn) return;
+function markUserInteracted() {
+  if (userInteracted) return;
+  userInteracted = true;
 
-  shareBtn.addEventListener("click", (e) => {
-    e.preventDefault();
+  // Si música no pudo, ahora sí:
+  if (!musicOn) {
+    tryPlayMusic();
+  }
 
-    const urlInvitacion = window.location.href; // link actual
-    const mensaje = `✨ Mis XV Años ✨\n\nTe comparto mi invitación premium para el 14 de febrero de 2026. Da clic para verla:\n${urlInvitacion}`;
-    const encoded = encodeURIComponent(mensaje);
-    const waUrl = `https://wa.me/?text=${encoded}`;
+  // Si quieres que el video principal también tenga audio cuando el usuario toque:
+  // (déjalo muted si prefieres que solo sea visual)
+}
 
-    window.open(waUrl, "_blank");
+window.addEventListener("pointerdown", markUserInteracted, { once: false });
+
+// Reproducir intro video (muted por política)
+if (introVideo) {
+  introVideo.muted = true;
+  introVideo.play().catch(() => {
+    // si falla, no pasa nada
   });
 }
+
+// Activar audio del video intro
+btnEnableVideoAudio?.addEventListener("click", async (e) => {
+  e.preventDefault();
+  userInteracted = true;
+
+  try {
+    introVideo.muted = false;
+    await introVideo.play();
+    tapHint?.classList.add("hidden");
+    showToast("Audio activado 🔊");
+  } catch (err) {
+    // si el navegador lo bloquea, mostramos hint
+    tapHint?.classList.remove("hidden");
+    showToast("Toca la pantalla para activar audio 🎧");
+  }
+});
+
+// Saltar intro
+btnSkipIntro?.addEventListener("click", (e) => {
+  e.preventDefault();
+  enterMain();
+});
+
+// Cuando termine el video intro, entra al main
+introVideo?.addEventListener("ended", () => {
+  enterMain();
+});
+
+// ============================
+// Música toggle
+// ============================
+musicToggle?.addEventListener("click", async () => {
+  userInteracted = true;
+
+  if (!musicOn) {
+    try {
+      await bgMusic.play();
+      musicOn = true;
+      updateMusicUI();
+      showToast("Música ON ✨");
+    } catch {
+      showToast(
+        "Tu navegador bloqueó el audio. Toca la pantalla e intenta de nuevo."
+      );
+    }
+    return;
+  }
+
+  bgMusic.pause();
+  musicOn = false;
+  updateMusicUI();
+  showToast("Música OFF");
+});
+
+// ============================
+// Countdown
+// ============================
+function updateCountdown() {
+  const now = new Date();
+  const diff = EVENT_DATE.getTime() - now.getTime();
+
+  const daysEl = $("cdDays");
+  const hoursEl = $("cdHours");
+  const minsEl = $("cdMins");
+  const secsEl = $("cdSecs");
+
+  if (diff <= 0) {
+    daysEl.textContent = "0";
+    hoursEl.textContent = "00";
+    minsEl.textContent = "00";
+    secsEl.textContent = "00";
+    return;
+  }
+
+  const totalSeconds = Math.floor(diff / 1000);
+  const days = Math.floor(totalSeconds / (3600 * 24));
+  const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+  const mins = Math.floor((totalSeconds % 3600) / 60);
+  const secs = totalSeconds % 60;
+
+  daysEl.textContent = String(days);
+  hoursEl.textContent = pad2(hours);
+  minsEl.textContent = pad2(mins);
+  secsEl.textContent = pad2(secs);
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+// ============================
+// Maps buttons
+// ============================
+$("openMaps")?.addEventListener("click", () => window.open(MAPS_URL, "_blank"));
+$("openWaze")?.addEventListener("click", () => window.open(WAZE_URL, "_blank"));
+
+// ============================
+// Lightbox (galería premium)
+// ============================
+const lightbox = $("lightbox");
+const lightboxImg = $("lightboxImg");
+const closeLightbox = $("closeLightbox");
+
+document.querySelectorAll(".g-item img").forEach((img) => {
+  img.addEventListener("click", () => {
+    lightboxImg.src = img.src;
+    lightbox.classList.remove("hidden");
+  });
+});
+
+closeLightbox?.addEventListener("click", () => {
+  lightbox.classList.add("hidden");
+  lightboxImg.src = "";
+});
+
+lightbox?.addEventListener("click", (e) => {
+  if (e.target === lightbox) {
+    lightbox.classList.add("hidden");
+    lightboxImg.src = "";
+  }
+});
+
+// ============================
+// Hashtag copy
+// ============================
+$("copyHashtag")?.addEventListener("click", async () => {
+  const text = "#MisXVDeLanaMood";
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast("Hashtag copiado ✨");
+  } catch {
+    showToast("No se pudo copiar. (Tu navegador lo bloqueó)");
+  }
+});
+
+// ============================
+// Footer contact
+// ============================
+const footerContact = $("footerContact");
+if (footerContact) footerContact.href = FOOTER_CONTACT_URL;
+
+// ============================
+// RSVP -> Google Sheets (Apps Script)
+// ============================
+$("rsvpForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const status = $("rsvpStatus");
+  status.textContent = "Enviando...";
+
+  if (
+    !GOOGLE_SHEETS_WEBAPP_URL ||
+    GOOGLE_SHEETS_WEBAPP_URL.includes("PEGAR_AQUI")
+  ) {
+    status.textContent =
+      "⚠️ Falta pegar tu URL de Google Apps Script en script.js (GOOGLE_SHEETS_WEBAPP_URL).";
+    return;
+  }
+
+  const form = e.target;
+  const data = {
+    name: form.name.value.trim(),
+    phone: form.phone.value.trim(),
+    attending: form.attending.value,
+    guests: form.guests.value,
+    message: form.message.value.trim(),
+    createdAt: new Date().toISOString(),
+  };
+
+  try {
+    const res = await fetch(GOOGLE_SHEETS_WEBAPP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) throw new Error("Bad response");
+    status.textContent = "✅ ¡Listo! Tu confirmación fue enviada.";
+    form.reset();
+  } catch (err) {
+    status.textContent =
+      "❌ No se pudo enviar. Revisa tu Apps Script (CORS / Deploy / permisos).";
+  }
+});

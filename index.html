@@ -3,306 +3,358 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Mis XV | Invitación Premium</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Fuentes Google -->
+  <!-- Open Graph / WhatsApp preview -->
+  <meta property="og:title" content="Mis XV | Invitación Premium" />
+  <meta property="og:description" content="Acompáñame a celebrar mis XV ✨ 14 Febrero 2026" />
+  <meta property="og:image" content="https://lauraac.github.io/lanaXV/img/Misxv.jpg" />
+  <meta property="og:type" content="website" />
+
+  <!-- Fuentes -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500;600;700&display=swap"
     rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
-
-  <!-- PREVIEW PARA WHATSAPP / FACEBOOK -->
-  <meta property="og:title" content="Mis XV Años | 14 de febrero 2026" />
-  <meta property="og:description"
-    content="Acompáñame a celebrar mis XV años. Noche roja y dorada, llena de magia, música y mucho amor. 💫" />
-  <!-- Cambia esta imagen por la portada de la invitación -->
-  <meta property="og:image" content="https://lauraac.github.io/lanaXV/img/Misxv.jpg" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://tu-dominio.com/xv/" />
 
   <link rel="stylesheet" href="styles.css" />
 </head>
 
-<body>
-  <div class="app-shell">
+<body class="no-scroll">
+  <!-- ===== DESTELLOS / BRILLOS (ruta: ./img/brillo.png o cambia la src) ===== -->
+  <div class="brillos-container" aria-hidden="true">
+    <!-- Cambia ./img/brillo.png por tu imagen de brillo si ya la tienes -->
+    <img class="brillo b1" src="./img/brillo.png" alt="" />
+    <img class="brillo b2" src="./img/brillo.png" alt="" />
+    <img class="brillo b3" src="./img/brillo.png" alt="" />
+    <img class="brillo b4" src="./img/brillo.png" alt="" />
+    <img class="brillo b5" src="./img/brillo.png" alt="" />
+    <img class="brillo b6" src="./img/brillo.png" alt="" />
+  </div>
 
-    <!-- ================== INTRO VIDEO + HERO ================== -->
-    <header id="intro" class="intro-section">
-      <div class="video-wrapper">
-        <!-- Cambia el src del video -->
-        <video id="introVideo" class="intro-video" playsinline muted autoplay poster="./img/1.jpg">
-          <source src="./img/XV.mp4" type="video/mp4" />
-        </video>
+  <!-- ===== INTRO VIDEO (PRIMERO QUE SE VE) ===== -->
+  <section id="intro" class="intro">
+    <video id="introVideo" class="intro__video" src="./img/XV.mp4" playsinline webkit-playsinline preload="auto"
+      muted></video>
 
+    <div class="intro__hud">
+      <button id="btnEnableVideoAudio" class="btn btn-glow btn-big">
+        Activar audio
+      </button>
 
-        <!-- Capa de brillos/partículas premium -->
-        <div class="sparkle-layer"></div>
+      <button id="btnSkipIntro" class="btn btn-ghost btn-skip">
+        Saltar
+      </button>
 
-        <!-- Overlay de texto sobre el video -->
-        <div class="intro-overlay">
-          <p class="tagline">Mis XV Años</p>
-          <h1 class="hero-name">Daniela</h1>
-          <p class="hero-subtitle">14 · Febrero · 2026</p>
-          <p class="hero-quote">
-            “Con amor” ♡
-          </p>
+      <p id="tapHint" class="tap-hint hidden">
+        Toca para activar audio 🎧
+      </p>
+    </div>
 
-          <button id="scrollDown" class="btn scroll-btn glow">
-            Ver invitación
-          </button>
+    <div class="intro__shade"></div>
+  </section>
 
-          <div id="tapToUnmute" class="tap-unmute-pill">
-            🎧 Toca el video para activar el sonido
+  <!-- ===== MAIN (PANTALLA PRINCIPAL) ===== -->
+  <main id="main" class="main hidden">
+    <!-- Música principal (se intenta autoplay al entrar) -->
+    <audio id="bgMusic" src="./img/lana.mp3" preload="auto" loop></audio>
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand__spark">✦</span>
+        <span class="brand__name">Mis XV</span>
+      </div>
+
+      <button id="musicToggle" class="mini-btn" aria-label="Música">
+        <span class="mini-btn__dot"></span>
+        <span id="musicText">Música</span>
+      </button>
+    </header>
+
+    <!-- Hero con video secundario (tú lo pondrás) -->
+    <section class="hero">
+      <div class="hero__frame">
+        <!-- Pon aquí tu segundo video (cambia ruta) -->
+        <video id="mainVideo" class="hero__video" src="./img/XV.mp4" playsinline webkit-playsinline preload="metadata"
+          muted loop></video>
+
+        <div class="hero__overlay">
+          <h1 class="title">Mis XV Años</h1>
+          <p class="subtitle">14 de Febrero de 2026</p>
+
+          <div class="hero__chips">
+            <span class="chip">❤️ Rojo & Dorado</span>
+            <span class="chip">✨ Lana mood</span>
+            <span class="chip">📍 CDMX / Edo. Méx</span>
+          </div>
+
+          <div class="hero__cta">
+            <a href="#rsvp" class="btn btn-glow">Confirmar asistencia</a>
+            <a href="#countdown" class="btn btn-gold">Ver contador</a>
+          </div>
+        </div>
+
+        <div class="hero__shine" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- Countdown -->
+    <section id="countdown" class="card">
+      <h2 class="section-title">Tiempo restante</h2>
+      <div class="countdown">
+        <div class="cd-box">
+          <div id="cdDays" class="cd-num">--</div>
+          <div class="cd-lbl">Días</div>
+        </div>
+        <div class="cd-box">
+          <div id="cdHours" class="cd-num">--</div>
+          <div class="cd-lbl">Horas</div>
+        </div>
+        <div class="cd-box">
+          <div id="cdMins" class="cd-num">--</div>
+          <div class="cd-lbl">Min</div>
+        </div>
+        <div class="cd-box">
+          <div id="cdSecs" class="cd-num">--</div>
+          <div class="cd-lbl">Seg</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Evento -->
+    <section class="card">
+      <h2 class="section-title">Detalles del evento</h2>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-ico">📅</div>
+          <div>
+            <p class="info-label">Fecha</p>
+            <p class="info-val">Sábado 14 Febrero 2026</p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-ico">⏰</div>
+          <div>
+            <p class="info-label">Hora</p>
+            <p class="info-val">8:00 PM</p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-ico">📍</div>
+          <div>
+            <p class="info-label">Lugar</p>
+            <p class="info-val">Salón (pon aquí el nombre)</p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-ico">✨</div>
+          <div>
+            <p class="info-label">Tema</p>
+            <p class="info-val">Rojo & Dorado • Elegante</p>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- Botón flotante de música general (canción mp3) -->
-      <button id="playMusicBtn" class="music-fab floating">
-        <span class="music-icon">♪</span>
-      </button>
+    <!-- Mapa -->
+    <section class="card" id="maps">
+      <h2 class="section-title">Ubicación</h2>
 
-      <!-- Cambia el src de la canción (mp3) -->
-      <audio id="bgMusic" loop>
-        <source src="./img/lana.mp3" type="audio/mpeg" />
-      </audio>
-    </header>
+      <div class="map-box">
+        <!-- Opción fácil: imagen de mapa (puedes cambiarla) -->
+        <img src="./img/1.jpg" alt="Mapa / ubicación" class="map-img" loading="lazy" />
 
-    <main>
-      <!-- =============== CUENTA REGRESIVA =============== -->
-      <section id="countdown" class="card-section reveal">
-        <h2 class="section-title script-title">Cuenta regresiva</h2>
-        <p class="section-subtitle">
-          Falta muy poco para que vivamos una noche inolvidable. ✨
-        </p>
-
-        <div class="countdown-grid">
-          <div class="time-box">
-            <span id="cd-days" class="time-value">00</span>
-            <span class="time-label">Días</span>
-          </div>
-          <div class="time-box">
-            <span id="cd-hours" class="time-value">00</span>
-            <span class="time-label">Horas</span>
-          </div>
-          <div class="time-box">
-            <span id="cd-mins" class="time-value">00</span>
-            <span class="time-label">Minutos</span>
-          </div>
-          <div class="time-box">
-            <span id="cd-secs" class="time-value">00</span>
-            <span class="time-label">Segundos</span>
-          </div>
+        <div class="map-actions">
+          <!-- Cambia MAPS_URL y WAZE_URL en JS -->
+          <button class="btn btn-glow" id="openMaps">Abrir en Google Maps</button>
+          <button class="btn btn-ghost" id="openWaze">Abrir en Waze</button>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- =============== INFO PRINCIPAL =============== -->
-      <section id="info" class="card-section reveal">
-        <h2 class="section-title script-title">Te invito a mis XV</h2>
+    <!-- Galería -->
+    <section class="card" id="gallery">
+      <h2 class="section-title">Galería</h2>
 
-        <p class="section-body">
-          Con mucha ilusión quiero invitarte a celebrar conmigo el inicio de una nueva etapa.
-          Tu compañía hará esta noche aún más especial. 🤍
-        </p>
+      <div class="gallery">
+        <button class="g-item">
+          <img src="img/1.jpg" alt="Foto 1" loading="lazy" />
+        </button>
+        <button class="g-item">
+          <img src="img/2.jpg" alt="Foto 2" loading="lazy" />
+        </button>
+        <button class="g-item">
+          <img src="./img/lana.gif" alt="GIF Lana" loading="lazy" />
+        </button>
+        <button class="g-item">
+          <img src="./img/lana2.gif" alt="GIF Lana 2" loading="lazy" />
+        </button>
+      </div>
 
-        <div class="event-details">
-          <div class="event-line">
-            <span class="event-label">Fecha:</span>
-            <span>14 de febrero de 2026</span>
-          </div>
-          <div class="event-line">
-            <span class="event-label">Hora:</span>
-            <span>08:00 p.m.</span>
-          </div>
-          <div class="event-line">
-            <span class="event-label">Lugar:</span>
-            <span>Nombre del salón / dirección completa</span>
-          </div>
-          <div class="event-line">
-            <span class="event-label">Dress code:</span>
-            <span>Elegante · Toques rojos y dorados bienvenidos ✨</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- =============== SECCIÓN ESTILO LANA DEL REY (MOOD) =============== -->
-      <section id="mood" class="card-section mood-section reveal">
-        <h2 class="section-title script-title">Vibes de la noche</h2>
-        <p class="section-body">
-          Una noche mágica, romántica y dramática, al estilo Lana del Rey:
-          luces tenues, brillo dorado, rojo intenso y mucha música para cantar y bailar.
-        </p>
-
-        <div class="mood-gallery">
-          <!-- Reemplaza estas imágenes por tus gifs/fotos -->
-          <figure class="mood-card hover-zoom">
-            <img src="./img/1.jpg" alt="Detalle decorativo rojo y dorado" />
-          </figure>
-          <figure class="mood-card hover-zoom">
-            <img src="./img/lana.gif" alt="Brillos y luces doradas" />
-          </figure>
-          <figure class="mood-card hover-zoom">
-            <img src="./img/2.jpg" alt="Ambiente romántico" />
-          </figure>
-        </div>
-      </section>
-
-      <!-- =============== MESA DE REGALOS PREMIUM =============== -->
-      <section id="gifts" class="card-section reveal">
-        <h2 class="section-title script-title">Mesa de regalos</h2>
-        <p class="section-body">
-          Tu presencia es lo más importante. Pero si deseas tener un detalle conmigo,
-          te comparto algunas opciones de regalo. 🎁
-        </p>
-
-        <div class="gift-grid">
-          <!-- Tarjeta / transferencia -->
-          <article class="gift-card hover-zoom">
-            <h3 class="gift-title">Transferencia / Depósito</h3>
-            <p class="gift-text">
-              Banco: <strong>Nombre del banco</strong><br />
-              Cuenta: <strong>0000 0000 0000</strong><br />
-              CLABE: <strong>000 000 000 000</strong><br />
-              Titular: <strong>Nombre de mamá/papá</strong>
-            </p>
-          </article>
-
-          <!-- Tienda 1 -->
-          <article class="gift-card hover-zoom">
-            <h3 class="gift-title">Mesa de regalos Liverpool</h3>
-            <p class="gift-text">
-              Número de evento: <strong>12345678</strong>
-            </p>
-            <a href="https://www.liverpool.com.mx/tienda/home" target="_blank" rel="noopener"
-              class="btn secondary small">
-              Ver mesa
-            </a>
-          </article>
-
-          <!-- Tienda 2 -->
-          <article class="gift-card hover-zoom">
-            <h3 class="gift-title">Amazon Wishlist</h3>
-            <p class="gift-text">
-              Encuentra algunos detalles especiales que elegí con mucho cariño.
-            </p>
-            <a href="https://www.amazon.com.mx/" target="_blank" rel="noopener" class="btn secondary small">
-              Ver lista
-            </a>
-          </article>
-        </div>
-      </section>
-
-      <!-- =============== CONFIRMACIÓN (GOOGLE SHEETS / FORM) =============== -->
-      <section id="rsvp" class="card-section reveal">
-        <h2 class="section-title script-title">Confirmación de asistencia</h2>
-        <p class="section-body">
-          Por favor ayúdame confirmando tu asistencia para poder organizar todo con amor y detalle. 💌
-        </p>
-
-        <!-- Cambia el href por el link de tu formulario de Google (que guarda en Sheets) -->
-        <a href="https://docs.google.com/forms/d/XXXXXXXXXXXX/viewform" target="_blank" rel="noopener"
-          class="btn primary glow">
-          Confirmar asistencia
-        </a>
-
-        <p class="section-note">
-          Puedes confirmar por este formulario o escribiendo a mis papás por WhatsApp.
-        </p>
-      </section>
-
-      <!-- =============== MAPA + WAZE =============== -->
-      <section id="mapa" class="card-section reveal">
-        <h2 class="section-title script-title">¿Cómo llegar?</h2>
-        <p class="section-body">
-          La fiesta será en <strong>Nombre del Salón</strong>. Toca uno de los botones para abrir la ruta.
-        </p>
-
-        <div class="map-buttons">
-          <!-- Reemplaza el href con la URL exacta de Google Maps -->
-          <a href="https://www.google.com/maps/place/..." target="_blank" rel="noopener" class="btn secondary">
-            Abrir en Google Maps
-          </a>
-
-          <!-- Reemplaza lat,lng en el URL de Waze -->
-          <a href="https://waze.com/ul?ll=19.000000,-99.000000&navigate=yes" target="_blank" rel="noopener"
-            class="btn secondary">
-            Abrir en Waze
-          </a>
-        </div>
-
-        <!-- Mapa embebido, cambia el src por el iframe que te da Google Maps -->
-        <div class="map-embed hover-glow">
-          <iframe src="https://www.google.com/maps/embed?pb=XXXX" style="border:0;" allowfullscreen="" loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
-      </section>
-
-      <!-- =============== GALERÍA / RECUERDOS =============== -->
-      <section id="galeria" class="card-section reveal">
-        <h2 class="section-title script-title">Un poquito de mí</h2>
-        <p class="section-body">
-          Aquí puedes ver algunos momentos y detalles especiales antes de la gran noche.
-        </p>
-
-        <div class="gallery-grid">
-          <!-- Cambia por tus fotos / gifs -->
-          <figure class="gallery-item hover-zoom">
-            <img src="./img/1.jpg" alt="Foto previa" />
-          </figure>
-          <figure class="gallery-item hover-zoom">
-            <img src="./img/2.jpg" alt="Foto previa" />
-          </figure>
-          <figure class="gallery-item hover-zoom">
-            <img src="./img/3.jpg" alt="Foto previa" />
-          </figure>
-          <figure class="gallery-item hover-zoom">
-            <img src="./img/lana2.gif" alt="Gif divertido" />
-          </figure>
-        </div>
-      </section>
-
-      <!-- =============== BOTÓN COMPARTIR WHATSAPP =============== -->
-      <section id="share" class="card-section reveal">
-        <h2 class="section-title script-title">Comparte la invitación</h2>
-        <p class="section-body">
-          Si quieres pasarle la invitación a alguien más de la familia, puedes compartirla por WhatsApp.
-        </p>
-
-        <!-- Cambia la URL de la invitación en "text=" -->
-        <a id="shareWhatsappBtn" href="#" target="_blank" rel="noopener" class="btn primary small glow">
-          Compartir por WhatsApp
-        </a>
-      </section>
-    </main>
-
-    <!-- =============== FOOTER DISCRETO CON TUS DATOS =============== -->
-    <footer class="footer">
-      <p class="footer-text">
-        Invitación digital premium ·
-        <span class="brand">Invitaciones LAC</span>
+      <p class="note">
+        Tip: toca una imagen para verla grande (lightbox premium).
       </p>
-      <!-- Cambia el número de WhatsApp y el texto -->
-      <a href="https://wa.me/52XXXXXXXXXX?text=Hola%20Lau,%20quiero%20informes%20de%20invitaciones%20digitales"
-        target="_blank" rel="noopener" class="footer-link">
-        Contáctame por WhatsApp
-      </a>
+    </section>
+
+    <!-- Itinerario -->
+    <section class="card" id="itinerary">
+      <h2 class="section-title">Itinerario</h2>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <p class="tl-time">8:00 PM</p>
+            <p class="tl-title">Recepción</p>
+            <p class="tl-desc">Bienvenida & fotos ✨</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <p class="tl-time">9:00 PM</p>
+            <p class="tl-title">Vals</p>
+            <p class="tl-desc">Momento especial ❤️</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <p class="tl-time">10:00 PM</p>
+            <p class="tl-title">Fiesta</p>
+            <p class="tl-desc">A bailar toda la noche 💃</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dress code -->
+    <section class="card" id="dresscode">
+      <h2 class="section-title">Dress code</h2>
+
+      <div class="pill-row">
+        <span class="pill">Formal / elegante</span>
+        <span class="pill">Rojo y dorado (opcional)</span>
+        <span class="pill">Brillos permitidos ✨</span>
+      </div>
+
+      <p class="note">
+        Evita vestir igual que la quinceañera 😉
+      </p>
+    </section>
+
+    <!-- Mesa de regalos -->
+    <section class="card" id="gifts">
+      <h2 class="section-title">Mesa de regalos</h2>
+
+      <div class="gift-grid">
+        <a class="gift-card" href="#" target="_blank" rel="noreferrer">
+          <div class="gift-ico">🎁</div>
+          <div>
+            <p class="gift-title">Liverpool</p>
+            <p class="gift-sub">Pega aquí tu link</p>
+          </div>
+        </a>
+
+        <a class="gift-card" href="#" target="_blank" rel="noreferrer">
+          <div class="gift-ico">🛍️</div>
+          <div>
+            <p class="gift-title">Amazon</p>
+            <p class="gift-sub">Pega aquí tu link</p>
+          </div>
+        </a>
+
+        <div class="gift-card">
+          <div class="gift-ico">💳</div>
+          <div>
+            <p class="gift-title">Lluvia de sobres</p>
+            <p class="gift-sub">Opcional (texto editable)</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hashtag / social -->
+    <section class="card" id="hashtag">
+      <h2 class="section-title">Hashtag</h2>
+      <div class="hashtag">
+        <p class="hash">#MisXVDeLanaMood</p>
+        <button class="btn btn-gold" id="copyHashtag">Copiar hashtag</button>
+      </div>
+    </section>
+
+    <!-- RSVP (Google Sheets) -->
+    <section class="card" id="rsvp">
+      <h2 class="section-title">Confirmación de asistencia</h2>
+
+      <form id="rsvpForm" class="form">
+        <label class="field">
+          <span>Nombre completo</span>
+          <input name="name" required placeholder="Ej. Ana López" />
+        </label>
+
+        <label class="field">
+          <span>Teléfono</span>
+          <input name="phone" required placeholder="Ej. 55 0000 0000" />
+        </label>
+
+        <label class="field">
+          <span>¿Asistirás?</span>
+          <select name="attending" required>
+            <option value="" disabled selected>Selecciona</option>
+            <option value="Sí">Sí, claro ✨</option>
+            <option value="No">No podré 😢</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Número de invitados</span>
+          <input name="guests" type="number" min="1" max="10" value="1" required />
+        </label>
+
+        <label class="field">
+          <span>Mensaje para la quinceañera</span>
+          <textarea name="message" rows="3" placeholder="Escribe algo bonito..."></textarea>
+        </label>
+
+        <button class="btn btn-glow btn-wide" type="submit">
+          Enviar confirmación
+        </button>
+
+        <p id="rsvpStatus" class="status"></p>
+      </form>
+
+      <p class="note">
+        Conecta tu Google Sheets pegando tu URL de Apps Script en <b>script.js</b>.
+      </p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p class="footer__line">Hecho con ❤️ en versión Premium</p>
+      <p class="footer__small">
+        Contacto (discreto):
+        <a href="#" id="footerContact">Invitaciones LAC</a>
+      </p>
     </footer>
-    <div id="sparkles-layer"></div>
-  </div> <!-- fin .app-shell -->
-  <!-- ⭐ Destellos de brillo en toda la pantalla (no bloquean nada) -->
-  <div class="brillos-container">
-    <!-- Cambia la ruta de la imagen por tu brillo/estrella -->
-    <img src="./img/brillo.png" alt="" class="brillo b1" />
-    <img src="./img/brillo.png" alt="" class="brillo b2" />
-    <img src="./img/brillo.png" alt="" class="brillo b3" />
-    <img src="./img/brillo.png" alt="" class="brillo b4" />
-    <img src="./img/brillo.png" alt="" class="brillo b5" />
-    <img src="./img/brillo.png" alt="" class="brillo b6" />
-  </div>
-  </div> <!-- fin .app-shell -->
-  </div>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true">
+      <button class="lightbox__close" id="closeLightbox">✕</button>
+      <img id="lightboxImg" alt="Vista previa" />
+    </div>
+
+    <!-- toast -->
+    <div id="toast" class="toast hidden"></div>
+  </main>
 
   <script src="script.js"></script>
 </body>
