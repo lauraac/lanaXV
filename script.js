@@ -58,11 +58,26 @@ function setupCountdown() {
 function setupScrollButton() {
   const btn = document.getElementById("scrollDown");
   const nextSection = document.getElementById("countdown");
+
   if (!btn || !nextSection) return;
 
-  btn.addEventListener("click", () => {
-    nextSection.scrollIntoView({ behavior: "smooth" });
-  });
+  const goDown = (event) => {
+    // Por si acaso evita comportamientos raros
+    event.preventDefault();
+
+    const sectionTop = nextSection.getBoundingClientRect().top + window.scrollY;
+
+    window.scrollTo({
+      top: sectionTop,
+      behavior: "smooth",
+    });
+  };
+
+  // Click en web / Android
+  btn.addEventListener("click", goDown);
+
+  // Toque en cel (iPhone / Android)
+  btn.addEventListener("touchstart", goDown, { passive: false });
 }
 
 // ================== MÚSICA DE FONDO (MP3) ==================
