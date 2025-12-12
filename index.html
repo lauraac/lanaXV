@@ -17,6 +17,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500;600;700&display=swap"
     rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -171,16 +172,27 @@
       <h2 class="section-title">Ubicación</h2>
 
       <div class="map-box">
-        <!-- Opción fácil: imagen de mapa (puedes cambiarla) -->
-        <img src="./img/1.jpg" alt="Mapa / ubicación" class="map-img" loading="lazy" />
+        <div class="map-embed">
+          <iframe src="https://www.google.com/maps?q=Salón%20de%20Eventos%20Dirección%20X%20CDMX&output=embed"
+            loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+        </div>
 
         <div class="map-actions">
-          <!-- Cambia MAPS_URL y WAZE_URL en JS -->
-          <button class="btn btn-glow" id="openMaps">Abrir en Google Maps</button>
-          <button class="btn btn-ghost" id="openWaze">Abrir en Waze</button>
+          <a class="btn btn-glow"
+            href="https://www.google.com/maps/search/?api=1&query=Salón+de+Eventos+Dirección+X+CDMX" target="_blank"
+            rel="noopener">
+            Abrir en Google Maps
+          </a>
+
+          <a class="btn btn-ghost" href="https://waze.com/ul?q=Salón%20de%20Eventos%20Dirección%20X%20CDMX"
+            target="_blank" rel="noopener">
+            Abrir en Waze
+          </a>
         </div>
       </div>
+
     </section>
+
 
     <!-- Galería -->
     <section class="card" id="gallery">
@@ -188,13 +200,13 @@
 
       <div class="gallery">
         <button class="g-item">
-          <img src="img/1.jpg" alt="Foto 1" loading="lazy" />
+          <img src="./img/lana.gif" alt="Foto 1" loading="lazy" />
         </button>
         <button class="g-item">
-          <img src="img/2.jpg" alt="Foto 2" loading="lazy" />
+          <img src="img/1.jpg" alt="Foto 2" loading="lazy" />
         </button>
         <button class="g-item">
-          <img src="./img/lana.gif" alt="GIF Lana" loading="lazy" />
+          <img src="img/2.jpg" alt="GIF Lana" loading="lazy" />
         </button>
         <button class="g-item">
           <img src="./img/lana2.gif" alt="GIF Lana 2" loading="lazy" />
