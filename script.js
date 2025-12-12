@@ -137,30 +137,27 @@ function setupMusicToggle() {
   }
 }
 
-// ================== VIDEO: CONTROLAR SONIDO Y MP3 ==================
 function setupVideoUnmute() {
   const video = document.getElementById("introVideo");
   const hint = document.getElementById("tapToUnmute");
   const audio = document.getElementById("bgMusic");
   const musicBtn = document.getElementById("playMusicBtn");
+
   if (!video) return;
 
-  // Aseguramos que el video inicia muteado
+  // ⚠️ iPhone requiere iniciar muteado
   video.muted = true;
 
   const hideHint = () => {
     if (!hint) return;
     hint.style.opacity = "0";
-    hint.style.transform = "translateY(10px)";
     setTimeout(() => (hint.style.display = "none"), 300);
   };
 
-  // Funciones para música
   const playMusic = async () => {
     try {
       await audio.play();
       isMusicPlaying = true;
-      userMutedMusic = false;
       musicBtn.classList.add("playing");
     } catch (e) {}
   };
@@ -171,37 +168,34 @@ function setupVideoUnmute() {
     musicBtn.classList.remove("playing");
   };
 
-  // ------- COMPORTAMIENTO AL TOCAR EL VIDEO -------
   const toggleVideoAudio = async () => {
-    // Si el video está muteado → ACTIVAR audio del video y apagar mp3
+    // SI ESTÁ MUTEADO → ACTIVAR AUDIO DEL VIDEO
     if (video.muted) {
       try {
         video.muted = false;
-        await video.play(); // Activar audio
+        await video.play(); // Safari requiere await
         isVideoSoundOn = true;
 
-        // Nunca deben sonar los dos
-        pauseMusic();
+        pauseMusic(); // nunca sonar ambos
       } catch (e) {
-        console.error("Error al activar sonido del video", e);
+        console.warn("iPhone aún no deja activar audio (requiere touch)", e);
       }
-    } else {
-      // Si el video YA tenía sonido → mutearlo
+    }
+
+    // SI YA SONABA → MUTEO Y VUELVE EL MP3
+    else {
       video.muted = true;
       isVideoSoundOn = false;
 
-      // Si la usuaria NO apagó el mp3 manualmente → sonar mp3
-      if (!userMutedMusic) {
-        playMusic();
-      }
+      if (!userMutedMusic) playMusic();
     }
 
     hideHint();
   };
 
-  // LISTENERS (ESTOS SÍ FUNCIONAN)
+  // 👇 Estos SÍ funcionan en todos los dispositivos
   video.addEventListener("click", toggleVideoAudio);
-  video.addEventListener("touchend", toggleVideoAudio);
+  video.addEventListener("touchstart", toggleVideoAudio, { passive: true });
 }
 
 // ================== ANIMACIONES EN SCROLL (REVEAL) ==================
