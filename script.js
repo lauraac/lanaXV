@@ -145,57 +145,52 @@ function setupVideoUnmute() {
   const musicBtn = document.getElementById("playMusicBtn");
   if (!video) return;
 
-  const markBtn = () => {
-    if (isMusicPlaying) {
-      musicBtn?.classList.add("playing");
-    } else {
-      musicBtn?.classList.remove("playing");
-    }
-  };
-
-  const playMusic = async () => {
-    if (!audio) return;
-    try {
-      await audio.play();
-      isMusicPlaying = true;
-      userMutedMusic = false;
-      markBtn();
-    } catch (err) {
-      console.warn("No se pudo reproducir la música:", err);
-    }
-  };
-
-  const pauseMusic = () => {
-    if (!audio) return;
-    audio.pause();
-    isMusicPlaying = false;
-    markBtn();
-  };
+  // Aseguramos que el video inicia muteado
+  video.muted = true;
 
   const hideHint = () => {
     if (!hint) return;
     hint.style.opacity = "0";
     hint.style.transform = "translateY(10px)";
-    setTimeout(() => {
-      hint.style.display = "none";
-    }, 300);
+    setTimeout(() => (hint.style.display = "none"), 300);
   };
 
-  const toggleVideoAudio = () => {
-    // Si NO estaba con sonido → encendemos audio del video y apagamos el mp3
-    if (!isVideoSoundOn) {
-      video.muted = false;
-      video.play().catch(() => {});
-      isVideoSoundOn = true;
+  // Funciones para música
+  const playMusic = async () => {
+    try {
+      await audio.play();
+      isMusicPlaying = true;
+      userMutedMusic = false;
+      musicBtn.classList.add("playing");
+    } catch (e) {}
+  };
 
-      // nunca deben sonar los 2:
-      pauseMusic();
+  const pauseMusic = () => {
+    audio.pause();
+    isMusicPlaying = false;
+    musicBtn.classList.remove("playing");
+  };
+
+  // ------- COMPORTAMIENTO AL TOCAR EL VIDEO -------
+  const toggleVideoAudio = async () => {
+    // Si el video está muteado → ACTIVAR audio del video y apagar mp3
+    if (video.muted) {
+      try {
+        video.muted = false;
+        await video.play(); // Activar audio
+        isVideoSoundOn = true;
+
+        // Nunca deben sonar los dos
+        pauseMusic();
+      } catch (e) {
+        console.error("Error al activar sonido del video", e);
+      }
     } else {
-      // Si SÍ tenía sonido → lo muteamos
+      // Si el video YA tenía sonido → mutearlo
       video.muted = true;
       isVideoSoundOn = false;
 
-      // Solo encendemos el mp3 si la usuaria no lo apagó con el botón
+      // Si la usuaria NO apagó el mp3 manualmente → sonar mp3
       if (!userMutedMusic) {
         playMusic();
       }
@@ -204,17 +199,9 @@ function setupVideoUnmute() {
     hideHint();
   };
 
-  // Click/touch sobre el video
+  // LISTENERS (ESTOS SÍ FUNCIONAN)
   video.addEventListener("click", toggleVideoAudio);
-  video.addEventListener(
-    "touchstart",
-    (e) => {
-      // Para evitar dobles disparos en algunos navegadores
-      e.preventDefault();
-      toggleVideoAudio();
-    },
-    { passive: false }
-  );
+  video.addEventListener("touchend", toggleVideoAudio);
 }
 
 // ================== ANIMACIONES EN SCROLL (REVEAL) ==================
