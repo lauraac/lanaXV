@@ -374,3 +374,25 @@ $("rsvpForm")?.addEventListener("submit", async (e) => {
       "❌ No se pudo enviar. Revisa tu Apps Script (CORS / Deploy / permisos).";
   }
 });
+window.addEventListener("load", () => {
+  const v = document.getElementById("mainVideo");
+  if (!v) return;
+
+  v.muted = true; // obligatorio para autoplay
+  v.playsInline = true;
+
+  const tryPlay = () => v.play().catch(() => {});
+
+  // intenta al cargar
+  tryPlay();
+
+  // intenta de nuevo cuando ya cargó suficiente
+  v.addEventListener("canplay", tryPlay);
+
+  // y si falla por políticas, se activa en el primer toque del usuario
+  document.addEventListener("touchstart", tryPlay, {
+    once: true,
+    passive: true,
+  });
+  document.addEventListener("click", tryPlay, { once: true });
+});

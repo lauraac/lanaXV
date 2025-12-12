@@ -80,7 +80,10 @@
     <section class="hero">
       <div class="hero__frame">
         <!-- Pon aquí tu segundo video (cambia ruta) -->
-        <video id="mainVideo" class="hero__video" src="./img/XV.mp4" playsinline webkit-playsinline muted loop></video>
+        <video id="mainVideo" class="hero__video" autoplay muted loop playsinline webkit-playsinline preload="auto">
+          <source src="./img/segundovideo.mp4" type="video/mp4" />
+        </video>
+
         <div class="hero__overlay">
           <h1 class="title">Mis XV Años</h1>
           <p class="subtitle">14 de Febrero de 2026</p>
