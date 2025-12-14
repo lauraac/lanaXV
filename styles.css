@@ -303,9 +303,9 @@ img {
 
 /* ===== MAIN LAYOUT ===== */
 .main {
-  width: min(var(--max), 100%);
+  width: 100%;
   margin: 0 auto;
-  padding: 16px 14px 40px;
+  padding: 0 14px 40px; /* ❌ sin padding arriba */
 }
 
 .topbar {
@@ -345,17 +345,27 @@ img {
   letter-spacing: 0.6px;
 }
 
-/* ===== HERO ===== */
+/* ===== HERO FULL VIDEO (SIN ESPACIOS NEGROS) ===== */
 .hero {
-  margin-top: 6px;
+  margin: 0;
 }
 
 .hero__frame {
   position: relative;
   width: 100%;
-  height: 100vh;
-  border-radius: 0;
+  height: 100svh; /* iOS safe */
+  height: 100dvh;
   overflow: hidden;
+
+  /* esquinas redondas */
+  border-radius: 22px;
+}
+
+/* fallback iOS */
+@supports (-webkit-touch-callout: none) {
+  .hero__frame {
+    height: -webkit-fill-available;
+  }
 }
 
 .hero__video {
@@ -363,7 +373,10 @@ img {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+
+  /* 🔥 llena sin dejar negro */
+  object-fit: cover;
+
   background: #000;
 }
 
@@ -931,4 +944,8 @@ img {
   pointer-events: none;
   transform: scale(0.95);
   transition: opacity 0.4s ease, transform 0.4s ease;
+}
+/* Quitar barra superior */
+.topbar {
+  display: none;
 }
