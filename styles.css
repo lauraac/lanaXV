@@ -147,7 +147,12 @@ img {
   inset: 0;
   width: 100vw;
   height: 100vh;
-  object-fit: cover;
+
+  /* ✅ para que se vea COMPLETO */
+  object-fit: contain;
+
+  /* ✅ para que no se vea gris detrás */
+  background: #000;
 }
 
 .intro__shade {
