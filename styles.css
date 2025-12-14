@@ -425,6 +425,11 @@ img {
   text-shadow: 0 6px 22px rgba(138, 0, 35, 0.75),
     0 0 34px rgba(255, 43, 106, 0.55);
 }
+@media (max-width: 380px) {
+  .title {
+    font-size: 48px;
+  }
+}
 
 .subtitle {
   margin: 0;
