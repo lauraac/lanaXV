@@ -396,3 +396,175 @@ window.addEventListener("load", () => {
   });
   document.addEventListener("click", tryPlay, { once: true });
 });
+
+// ===== GALERÍA PRO: carrusel + dots + caption + autoplay + swipe =====
+(function galleryPro() {
+  const track = document.querySelector("#gallery .gpro-track");
+  const caption = document.getElementById("gproCaption");
+  const dotsWrap = document.getElementById("gproDots");
+  const btnPrev = document.querySelector("#gallery .gpro-prev");
+  const btnNext = document.querySelector("#gallery .gpro-next");
+  if (!track || !caption || !dotsWrap || !btnPrev || !btnNext) return;
+
+  const slides = Array.from(track.querySelectorAll(".gpro-slide"));
+  const total = slides.length;
+
+  // Crear dots
+  dotsWrap.innerHTML = "";
+  const dots = slides.map((_, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "gpro-dot";
+    b.setAttribute("aria-label", `Ir a foto ${i + 1}`);
+    b.addEventListener("click", () => goTo(i));
+    dotsWrap.appendChild(b);
+    return b;
+  });
+
+  function nearestIndex() {
+    const center = track.scrollLeft + track.clientWidth / 2;
+    let best = 0,
+      bestDist = Infinity;
+    slides.forEach((s, i) => {
+      const left = s.offsetLeft + s.clientWidth / 2;
+      const d = Math.abs(left - center);
+      if (d < bestDist) {
+        bestDist = d;
+        best = i;
+      }
+    });
+    return best;
+  }
+
+  function updateUI(i) {
+    const step = slides[i].getAttribute("data-step") || String(i + 1);
+    const label = slides[i].getAttribute("data-label") || "";
+    caption.textContent = `Foto ${step}/12 · ${label}`.trim();
+
+    dots.forEach((d, idx) => d.classList.toggle("is-active", idx === i));
+  }
+
+  function goTo(i) {
+    const s = slides[i];
+    if (!s) return;
+    track.scrollTo({
+      left: s.offsetLeft - (track.clientWidth - s.clientWidth) / 2,
+      behavior: "smooth",
+    });
+    updateUI(i);
+    current = i;
+  }
+
+  // Botones
+  btnPrev.addEventListener("click", () => goTo((current - 1 + total) % total));
+  btnNext.addEventListener("click", () => goTo((current + 1) % total));
+
+  // Lightbox (usa el tuyo)
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImg = document.getElementById("lightboxImg");
+  slides.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const img = btn.querySelector("img");
+      if (!img || !lightbox || !lightboxImg) return;
+      lightboxImg.src = img.src;
+      lightbox.classList.remove("hidden");
+    });
+  });
+
+  // Detectar scroll para actualizar caption/dots
+  let raf = null;
+  track.addEventListener("scroll", () => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      current = nearestIndex();
+      updateUI(current);
+    });
+  });
+
+  // Autoplay suave (se pausa si el usuario interactúa)
+  let current = 0;
+  let autoplay = setInterval(() => goTo((current + 1) % total), 3500);
+
+  function pauseAutoplay() {
+    clearInterval(autoplay);
+    autoplay = null;
+  }
+  function resumeAutoplay() {
+    if (autoplay) return;
+    autoplay = setInterval(() => goTo((current + 1) % total), 3500);
+  }
+
+  ["touchstart", "mousedown", "pointerdown", "wheel"].forEach((evt) => {
+    track.addEventListener(evt, pauseAutoplay, { passive: true });
+  });
+  track.addEventListener("touchend", () => setTimeout(resumeAutoplay, 2500), {
+    passive: true,
+  });
+  track.addEventListener("mouseup", () => setTimeout(resumeAutoplay, 2500));
+
+  // Inicial
+  requestAnimationFrame(() => {
+    goTo(0);
+    updateUI(0);
+  });
+})();
+
+// ===== Corazón globo: flota y explota al tocar =====
+(function heartBalloonFX() {
+  const btn = document.getElementById("heartBalloon");
+  if (!btn) return;
+
+  function spawnParticles(x, y) {
+    const count = 18; // más = más explosión
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement("span");
+      p.className = "heart-particle";
+
+      // dispersión aleatoria
+      const angle = Math.random() * Math.PI * 2;
+      const power = 50 + Math.random() * 90;
+      const dx = Math.cos(angle) * power;
+      const dy = Math.sin(angle) * power - (30 + Math.random() * 30);
+
+      p.style.left = x + "px";
+      p.style.top = y + "px";
+      p.style.setProperty("--dx", dx.toFixed(1) + "px");
+      p.style.setProperty("--dy", dy.toFixed(1) + "px");
+
+      // variar tamaños
+      const size = 6 + Math.random() * 7;
+      p.style.width = size + "px";
+      p.style.height = size + "px";
+
+      // variar tonos (rojo/rosita/blanco)
+      const r = Math.random();
+      if (r < 0.2) p.style.background = "rgba(255,255,255,0.85)";
+      else if (r < 0.45) p.style.background = "rgba(255, 43, 106, 0.85)";
+      else p.style.background = "rgba(138, 0, 35, 0.85)";
+
+      document.body.appendChild(p);
+
+      // limpiar
+      setTimeout(() => p.remove(), 800);
+    }
+  }
+
+  btn.addEventListener("click", () => {
+    if (btn.classList.contains("pop")) return;
+
+    // vibra si se puede
+    if (navigator.vibrate) navigator.vibrate([30, 30, 40]);
+
+    const rect = btn.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+
+    btn.classList.add("pop");
+    spawnParticles(cx, cy);
+
+    // (opcional) que reaparezca después
+    setTimeout(() => {
+      btn.classList.remove("pop");
+    }, 1800);
+  });
+})();
