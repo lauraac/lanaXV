@@ -1766,3 +1766,87 @@ img {
     transform: translateX(30%);
   }
 }
+
+/* Animación de brillo para las secciones */
+@keyframes efectoBrillo {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Aplica la animación al título de cada sección */
+.section-title {
+  animation: efectoBrillo 1s ease-out;
+}
+
+/* Efecto de brillo suave para los íconos */
+.info-ico {
+  animation: efectoBrillo 1.2s ease-out;
+}
+
+/* Efecto de brillo suave para las tarjetas */
+.card {
+  animation: efectoBrillo 1.5s ease-out;
+}
+
+/* ===============================
+   SHINE premium reutilizable
+   Úsalo con class="shine-sweep"
+   =============================== */
+
+.shine-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine-sweep::after {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.18) 45%,
+    rgba(255, 43, 106, 0.18) 55%,
+    transparent 70%
+  );
+  transform: translateX(-30%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* PC */
+.shine-sweep:hover::after {
+  opacity: 1;
+  animation: shineSweep 1.2s ease forwards;
+}
+
+/* CELULAR (tap) */
+.shine-sweep:active::after {
+  opacity: 1;
+  animation: shineSweep 1.2s ease forwards;
+}
+
+/* Accesibilidad (teclado) */
+.shine-sweep:focus-within::after {
+  opacity: 1;
+  animation: shineSweep 1.2s ease forwards;
+}
+
+@keyframes shineSweep {
+  from {
+    transform: translateX(-30%);
+  }
+  to {
+    transform: translateX(30%);
+  }
+}
