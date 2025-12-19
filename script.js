@@ -360,20 +360,23 @@ $("rsvpForm")?.addEventListener("submit", async (e) => {
   };
 
   try {
-    const res = await fetch(GOOGLE_SHEETS_WEBAPP_URL, {
+    await fetch(GOOGLE_SHEETS_WEBAPP_URL, {
       method: "POST",
+      mode: "no-cors", // ✅ CLAVE para evitar el bloqueo CORS
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
 
-    if (!res.ok) throw new Error("Bad response");
+    // ✅ Como es no-cors, no podemos leer res.ok, asumimos OK si no truena
     status.textContent = "✅ ¡Listo! Tu confirmación fue enviada.";
     form.reset();
   } catch (err) {
     status.textContent =
-      "❌ No se pudo enviar. Revisa tu Apps Script (CORS / Deploy / permisos).";
+      "❌ No se pudo enviar. Revisa tu conexión e intenta de nuevo.";
+    console.error(err);
   }
 });
+
 window.addEventListener("load", () => {
   const v = document.getElementById("mainVideo");
   if (!v) return;
