@@ -1868,3 +1868,58 @@ img {
 
   box-shadow: inset 0 0 0 1px rgba(255, 43, 106, 0.08);
 }
+.recuerdos-card {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  margin-top: 12px;
+
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.25);
+  text-decoration: none;
+  color: #fff;
+
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.recuerdos-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 55px rgba(255, 43, 106, 0.35);
+}
+
+.recuerdos-ico {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 43, 106, 0.25),
+    rgba(138, 0, 35, 0.25)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.recuerdos-title {
+  margin: 0;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.recuerdos-sub {
+  margin: 2px 0 0;
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.recuerdos-arrow {
+  font-size: 20px;
+  opacity: 0.8;
+}
