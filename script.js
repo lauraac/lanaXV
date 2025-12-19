@@ -6,7 +6,8 @@
 const EVENT_DATE = new Date("2026-02-14T20:00:00");
 
 // Pega aquí tu URL de Google Apps Script (para guardar en Google Sheets)
-const GOOGLE_SHEETS_WEBAPP_URL = "PEGAR_AQUI_TU_URL_DE_APPS_SCRIPT";
+const GOOGLE_SHEETS_WEBAPP_URL =
+  "https://script.google.com/macros/s/AKfycbxd_zZVNpvSQ3z4_kAOLZwM1EnnpwkA4UVuDJZ-nhr1rAA5kSoIeitBQNPf0ZmunoFHZg/exec";
 
 // Cambia por el link real del lugar
 const MAPS_URL =
